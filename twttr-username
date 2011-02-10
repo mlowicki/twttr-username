@@ -1,0 +1,18 @@
+#
+#   Usage:
+#       twttr-username input
+#
+
+format="%-20s [%s]\n"
+
+while read username; do
+    resp=$(wget -q https://twitter.com/users/username_available?username=$username -O -)
+
+    if [[ $resp =~ 'Username has already been taken' ]]; then
+        printf "$format" $username "TAKEN"
+    elif [[ $resp =~ "Only use letters, numbers and '_'" ]]; then
+        printf "$format" $username "WRONG FORMAT"
+    elif [[ $resp =~ 'Available!' ]]; then
+        printf "$format" $username "AVAILABLE"
+    fi
+done < $1
